@@ -20,6 +20,14 @@ export default function Home() {
       <h1 className='text-white tracking-widest font-light py-8'>
         REPRODUCTOR VR <b className='font-bold'>OFFLINE</b>
       </h1>
+
+      <div className="mx-auto w-full max-w-fit">
+        <h4 className="text-xl pb-4">TODO:</h4>
+        <ul>
+          <li>Reproductor</li>
+          <li>Reset orientación</li>
+        </ul>
+      </div>
     </main>
   );
 }
