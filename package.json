@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/aframe": "^1.2.6",
     "@types/next-pwa": "^5.6.9",
     "aframe": "^1.6.0",
+    "aframe-look-at-component": "^1.0.0",
     "next": "14.2.4",
     "next-pwa": "^5.6.0",
     "react": "^18",
