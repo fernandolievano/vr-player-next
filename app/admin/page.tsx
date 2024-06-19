@@ -1,3 +1,4 @@
+import AdminVideoControls from '@/components/AdminVideoControls';
 import os from 'os'
 
 // TODO: QR link
@@ -34,17 +35,7 @@ export default function AdminPage() {
         <input type="file" name="" id="" />
       </div>
 
-      <div className="py-8 text-center">
-        <h2 className='mb-4'>Controles del video:</h2>
-
-        <div className="flex gap-4 items-center justify-center">
-        <button className='bg-blue-400 px-4 py-2 rounded'>Play</button>
-        <button className='bg-blue-400 px-4 py-2 rounded'>Pause</button>
-        <button className='bg-blue-400 px-4 py-2 rounded'>Stop</button>
-
-        <p>Barrita del video</p>
-        </div>
-      </div>
+      <AdminVideoControls />
     </div>
   )
 }

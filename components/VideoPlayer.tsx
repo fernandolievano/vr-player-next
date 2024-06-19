@@ -1,7 +1,8 @@
 'use client';
 
 // components/ThreeSixtyVideoPlayer.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import io from 'socket.io-client';
 import 'aframe';
 import 'aframe-look-at-component';
 
@@ -17,7 +18,8 @@ declare global {
 }
 
 const ThreeSixtyVideoPlayer: React.FC = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [showOkButton, setShowOkButton] = useState<Boolean>(true);
 
   useEffect(() => {
     // Check if 'log-on-play' component is already registered
@@ -31,17 +33,57 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
         }
       });
     }
+
+    const socket = io('https://localhost:3000', {
+      secure: true,
+      rejectUnauthorized: false, // This is needed for self-signed certificates
+    });
+
+    socket.on('message', (msg: string) => {
+      console.log('Message received at "VideoPlayer" from server:', msg);
+    });
+
+    socket.on('action', (msg: string) => {
+      console.log('Action received at "VideoPlayer" from server:', msg);
+
+      switch (msg) {
+        case 'play':
+          handlePlay();
+          break;
+        case 'pause':
+          handlePause();
+          break;
+
+        case 'stop':
+          handleStop();
+          break;
+
+        default:
+          break;
+      }
+    });
   }, []);
 
   // Step 2: Add Event Handlers
   const handlePlay = () => {
-    videoRef.current?.play();
-    console.log('play button');
+    if (videoRef) {
+      videoRef.current?.play();
+      console.log('play button');
+    }
   };
 
   const handlePause = () => {
-    videoRef.current?.pause();
-    console.log('pause button');
+    if (videoRef.current) {
+      videoRef.current?.pause();
+      console.log('pause button');
+    }
+  };
+
+  const handleStop = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
   };
 
   return (
@@ -55,9 +97,13 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
         </video>
       </a-scene>
       {/* controls */}
-      <div className="absolute top-4 right-4 flex gap-4 items-center justify-center">
-        <button onClick={handlePlay} className="px-4 py-2 text-center bg-blue-400 hover:bg-blue-300 rounded transition-colors text-white">Play</button>
-        <button onClick={handlePause} className="px-4 py-2 text-center bg-blue-400 hover:bg-blue-300 rounded transition-colors text-white">Pause</button>
+      <div className="absolute w-fit h-fit border border-red-400 inset-0 mx-auto my-auto text-center">
+        <button
+          className={`z-50 px-4 py-2 text-center bg-blue-400 hover:bg-blue-300 rounded transition-colors text-white ${showOkButton ? 'block' : 'hidden'}`}
+          onClick={() => setShowOkButton(false)}
+        >
+          Ok
+        </button>
       </div>
     </div>
   );
