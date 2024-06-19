@@ -97,12 +97,12 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
         </video>
       </a-scene>
       {/* controls */}
-      <div className="absolute w-fit h-fit border border-red-400 inset-0 mx-auto my-auto text-center">
+      <div className={`absolute w-full h-full flex items-center justify-center inset-0 mx-auto my-auto text-center bg-white bg-opacity-5 transition-all ${showOkButton ? 'block' : 'hidden'}`}>
         <button
-          className={`z-50 px-4 py-2 text-center bg-blue-400 hover:bg-blue-300 rounded transition-colors text-white ${showOkButton ? 'block' : 'hidden'}`}
+          className={`z-50 px-4 py-2 text-center bg-blue-400 hover:bg-blue-300 rounded transition-colors text-white`}
           onClick={() => setShowOkButton(false)}
         >
-          Ok
+          Acceder
         </button>
       </div>
     </div>
