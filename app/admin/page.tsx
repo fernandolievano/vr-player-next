@@ -21,21 +21,17 @@ export default function AdminPage() {
 
   const currentIP = getLocalIP();
   const currentPort = process.env.CUSTOM_PORT
+  const currentURL = `https://${currentIP}:${currentPort}`
 
   return (
     <div className='min-h-screen bg-black text-white py-12'>
       <h1 className='text-2xl text-center py-12'>Link:{' '}
-        <a href={`https://${currentIP}:${currentPort}`} target='_blank'>
-          https://{ currentIP }:{currentPort}
+        <a href={currentURL} target='_blank'>
+          {currentURL}
         </a>
       </h1>
 
-      <div className="py-8 flex flex-col gap-4 items-center justify-center">
-        <h2>Cargar video:</h2>
-        <input type="file" name="" id="" />
-      </div>
-
-      <AdminVideoControls />
+      <AdminVideoControls url={currentURL} />
     </div>
   )
 }

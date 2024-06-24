@@ -19,7 +19,10 @@ declare global {
 
 const ThreeSixtyVideoPlayer: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const sourceRef = useRef<HTMLSourceElement | null>(null);
   const [showOkButton, setShowOkButton] = useState<Boolean>(true);
+  const [newUrlVideo, setNewUrlVideo] = useState<string>('');
+  const [isReceiving, setIsReceiving] = useState<boolean>(false);
 
   useEffect(() => {
     // Check if 'log-on-play' component is already registered
@@ -62,6 +65,21 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
           break;
       }
     });
+
+    socket.on('video-path', (msg: string) => {
+      setIsReceiving(true);
+
+      console.log('receiving...');
+      setNewUrlVideo(msg);
+      console.log('new url for video is: ', msg);
+
+      if (videoRef.current) {
+        videoRef.current.src = msg;
+        videoRef.current.load();
+      }
+
+      setIsReceiving(false);
+    });
   }, []);
 
   // Step 2: Add Event Handlers
@@ -85,6 +103,18 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
       videoRef.current.currentTime = 0;
     }
   };
+  // const handleFileChange = () => {
+  //   const blob = new Blob(receivedChunks, { type: 'video/mp4' });
+  //   const url = URL.createObjectURL(blob);
+
+  //   console.log('handling file change...');
+
+  //   if (videoRef.current && sourceRef.current) {
+  //     sourceRef.current.remove();
+  //     videoRef.current.src = url;
+  //     videoRef.current.load()
+  //   }
+  // };
 
   return (
     <div className="relative h-screen w-screen">
@@ -92,8 +122,8 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
         <a-videosphere src="#video360" rotation="0 -90 0"></a-videosphere>
         <a-entity camera look-controls wasd-controls position="0 1.6 0"></a-entity>
 
-        <video ref={videoRef} id="video360" className='h-full w-full' crossOrigin="anonymous">
-          <source src="https://pchen66.github.io/Panolens/examples/asset/textures/video/ClashofClans.mp4" type='video/mp4' />
+        <video ref={videoRef} id="video360" className='h-full w-full' crossOrigin="anonymous" src="https://pchen66.github.io/Panolens/examples/asset/textures/video/ClashofClans.mp4">
+          {/* <source ref={sourceRef} src="https://pchen66.github.io/Panolens/examples/asset/textures/video/ClashofClans.mp4" type='video/mp4' /> */}
         </video>
       </a-scene>
       {/* controls */}
@@ -105,6 +135,10 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
           Acceder
         </button>
       </div>
+
+      {isReceiving && <div className="absolute w-full h-full flex items-center justify-center inset-0 mx-auto my-auto text-center bg-white bg-opacity-5 transition-all z-50">
+        <h1 className='text-2xl text-center text-neutral-500 py-12'>Recibiendo video...</h1>
+      </div>}
     </div>
   );
 };
