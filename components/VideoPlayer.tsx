@@ -1,11 +1,10 @@
 'use client';
 
 // components/ThreeSixtyVideoPlayer.tsx
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import 'aframe';
 import 'aframe-look-at-component';
-import { AppContext } from '@/context/AppContext';
 
 declare global {
   namespace JSX {
@@ -18,14 +17,17 @@ declare global {
   }
 }
 
-const ThreeSixtyVideoPlayer: React.FC = () => {
+interface PropsInterface {
+  url: string
+}
+
+const ThreeSixtyVideoPlayer: React.FC<PropsInterface> = (props: PropsInterface) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const sourceRef = useRef<HTMLSourceElement | null>(null);
   const [showOkButton, setShowOkButton] = useState<Boolean>(true);
   const [newUrlVideo, setNewUrlVideo] = useState<string>('');
   const [isReceiving, setIsReceiving] = useState<boolean>(false);
-  const context = useContext(AppContext)
-  const URL = context.currentUrl
+  const URL  = props.url
 
   useEffect(() => {
     // Check if 'log-on-play' component is already registered

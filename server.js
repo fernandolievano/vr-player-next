@@ -7,7 +7,7 @@ const path = require('path');
 const multer = require('multer');
 const cors = require('cors')
 
-const CUSTOM_PORT = process.env.CUSTOM_PORT || 443;
+const CUSTOM_PORT = process.env.CUSTOM_PORT || 3000;
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();

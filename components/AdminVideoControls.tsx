@@ -13,15 +13,12 @@ interface videoEvent {
 }
 
 export default function AdminVideoControls({ url }: { url: string; }) {
-  const context = useContext(AppContext)
-  const URL = context.currentUrl
-
-
   const [socket, setSocket] = useState<Socket<videoEvent> | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    const newSocket = io(URL, {
+    const newSocket = io(url, {
       secure: true,
       rejectUnauthorized: false, // This is needed for self-signed certificates
     });
@@ -60,39 +57,39 @@ export default function AdminVideoControls({ url }: { url: string; }) {
     socket?.emit('action', 'stop');
   };
   const handleSendFile = async () => {
-    // if (file !== null && socket !== null) {
-    //   const newVideoPath = `${url}/${file.name}`;
-    //   socket.emit('video-path', newVideoPath);
-    // }
-    // ! old code above
-    if (socket && file) {
-      const formData = new FormData();
-      formData.append('video', file as File);
+   setIsLoading(true)
+   if (socket && file) {
+    const formData = new FormData();
+    formData.append('video', file as File);
 
 
-      const response = await fetch(`${URL}/upload-video`, {
-        method: 'POST',
-        body: formData
-      });
+    const response = await fetch(`${url}/upload-video`, {
+      method: 'POST',
+      body: formData
+    });
 
-      if (!response.ok) {
-        alert('la xuxa de la wea no anduvo weon');
-      } else {
-        const responseJson = await response.json();
-        console.log('response: ', responseJson.file);
-        alert('se subio el video');
-        const newVideoPath = `${url}/${responseJson.file}`;
-        socket.emit('video-path', newVideoPath);
-      }
+    if (!response.ok) {
+      alert('Error al cargar el vídeo');
+    } else {
+      const responseJson = await response.json();
+      console.log('response: ', responseJson.file);
+      alert('Se subió el video');
+      const newVideoPath = `${url}/${responseJson.file}`;
+      socket.emit('video-path', newVideoPath);
     }
+    setIsLoading(false)
+  }
 
   };
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoading(true)
     const selectedFile = event.target.files?.[0];
 
     if (selectedFile) {
-      setFile(selectedFile);
+      await setFile(selectedFile);
     }
+
+    setIsLoading(false)
   };
 
 
@@ -113,10 +110,10 @@ export default function AdminVideoControls({ url }: { url: string; }) {
           id="formFile" />
 
         <button
-          className='bg-blue-400 px-4 py-2 rounded mx-auto my-4 disabled:bg-slate-500 disabled:cursor-not-allowed' onClick={handleSendFile}
-          disabled={file === null}
+          className='bg-blue-400 px-4 py-2 rounded mx-auto my-4 disabled:bg-slate-500 disabled:cursor-not-allowed transition-all' onClick={handleSendFile}
+          disabled={((file === null) || isLoading)}
         >
-          Enviar
+          {isLoading ? 'Cargando video...' : 'Enviar vídeo'}
         </button>
       </div>
 
