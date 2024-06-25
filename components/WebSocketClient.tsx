@@ -1,11 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
+import { AppContext } from '@/context/AppContext';
+import { useContext, useEffect } from 'react';
 import io from 'socket.io-client';
 
 const WebSocketClient = () => {
+  const context = useContext(AppContext)
+  const URL = context.currentUrl
+
   useEffect(() => {
-    const socket = io('https://localhost:3000', {
+    const socket = io(URL, {
       secure: true,
       rejectUnauthorized: false, // This is needed for self-signed certificates
     });

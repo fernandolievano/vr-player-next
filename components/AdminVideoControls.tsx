@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { AppContext } from '@/context/AppContext';
+import { useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 // Define the type of the events your socket will handle
@@ -12,13 +13,15 @@ interface videoEvent {
 }
 
 export default function AdminVideoControls({ url }: { url: string; }) {
+  const context = useContext(AppContext)
+  const URL = context.currentUrl
 
 
   const [socket, setSocket] = useState<Socket<videoEvent> | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
-    const newSocket = io('https://localhost:3000', {
+    const newSocket = io(URL, {
       secure: true,
       rejectUnauthorized: false, // This is needed for self-signed certificates
     });
@@ -67,7 +70,7 @@ export default function AdminVideoControls({ url }: { url: string; }) {
       formData.append('video', file as File);
 
 
-      const response = await fetch('https://localhost:3000/upload-video', {
+      const response = await fetch(`${URL}/upload-video`, {
         method: 'POST',
         body: formData
       });

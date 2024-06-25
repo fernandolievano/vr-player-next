@@ -7,7 +7,7 @@ const path = require('path');
 const multer = require('multer');
 const cors = require('cors')
 
-const CUSTOM_PORT = 3000;
+const CUSTOM_PORT = process.env.CUSTOM_PORT || 443;
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -20,7 +20,14 @@ const httpsOptions = {
 app.prepare().then(() => {
   const expressApp = express();
   const server = createServer(httpsOptions, expressApp);
-  const io = new Server(server);
+  const io = new Server(server, {
+    cors: {
+      origin: '*',
+      methods: ["GET", "POST"]
+    }
+  });
+
+  expressApp.use(cors())
 
   io.on('connection', (socket) => {
     console.log('New user connected!');
@@ -48,8 +55,6 @@ app.prepare().then(() => {
       console.log('A user disconnected');
     });
   });
-
-  expressApp.use(cors())
 
   expressApp.get('*', (req, res) => {
     handle(req, res);

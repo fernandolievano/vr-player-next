@@ -1,10 +1,11 @@
 'use client';
 
 // components/ThreeSixtyVideoPlayer.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import 'aframe';
 import 'aframe-look-at-component';
+import { AppContext } from '@/context/AppContext';
 
 declare global {
   namespace JSX {
@@ -23,6 +24,8 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
   const [showOkButton, setShowOkButton] = useState<Boolean>(true);
   const [newUrlVideo, setNewUrlVideo] = useState<string>('');
   const [isReceiving, setIsReceiving] = useState<boolean>(false);
+  const context = useContext(AppContext)
+  const URL = context.currentUrl
 
   useEffect(() => {
     // Check if 'log-on-play' component is already registered
@@ -37,7 +40,7 @@ const ThreeSixtyVideoPlayer: React.FC = () => {
       });
     }
 
-    const socket = io('https://localhost:3000', {
+    const socket = io(URL, {
       secure: true,
       rejectUnauthorized: false, // This is needed for self-signed certificates
     });
