@@ -5,7 +5,9 @@ const { Server } = require('socket.io');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const bodyParser = require('body-parser')
 const cors = require('cors')
+const QRCode = require('qrcode');
 
 const CUSTOM_PORT = process.env.CUSTOM_PORT || 3000;
 const dev = process.env.NODE_ENV !== 'production';
@@ -28,6 +30,7 @@ app.prepare().then(() => {
   });
 
   expressApp.use(cors())
+  expressApp.use(bodyParser.json())
 
   io.on('connection', (socket) => {
     console.log('New user connected!');
@@ -111,6 +114,12 @@ app.prepare().then(() => {
       }
     });
   });
+  // Get QR code endpoint
+  expressApp.post('/get-qr', async (req, res) => {
+    const url = req.body.url;
+    const qrCodeImage = await QRCode.toDataURL(url);
+    res.send({ image: qrCodeImage })
+  })
 
   // Make sure the /public/videos folder exists or create it
   const videosDir = path.join(__dirname, 'public', 'videos');
