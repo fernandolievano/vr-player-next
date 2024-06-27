@@ -95,7 +95,7 @@ export default function AdminVideoControls({ url }: { url: string; }) {
 
   return (
     <div className="py-8 text-center w-full px-8 container mx-auto">
-      <div className="mb-3">
+      <div className="mb-4 w-full max-w-[500px] mx-auto">
         <label
           htmlFor="formFile"
           className="text-xl mb-2 inline-block text-neutral-500 dark:text-neutral-400"
